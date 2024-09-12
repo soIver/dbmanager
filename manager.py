@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QPlainTextEdit
-from mysql.connector import connect, Error
+from mysql.connector import connect
 
 class DatabaseManager(QWidget):
     def __init__(self, hostname, username, password, database):
@@ -61,12 +61,12 @@ class DatabaseManager(QWidget):
                 password=self.password,
                 database=self.database
             )
-        except Error as e:
-            self.outputTextEdit.setPlainText(str(e))
+        except:
+            pass
 
     def createTable(self):
         try:
-            data = self.inputTextEdit.text()
+            data = self.inputTextEdit.toPlainText()
             data = data.split(':')
             tablename = data[0].strip()
             columns = data[1].strip()
@@ -75,12 +75,12 @@ class DatabaseManager(QWidget):
             cursor.execute(query)
             self.connection.commit()
             self.outputTextEdit.setPlainText(f"Таблица {tablename} успешно создана.")
-        except Error:
+        except:
             self.outputTextEdit.setPlainText(self.err_msg)
 
     def insertData(self):
         try:
-            data = self.inputTextEdit.text()
+            data = self.inputTextEdit.toPlainText()
             data = data.split(':')
             tablename = data[0].strip()
             data = data[1].split(',')
@@ -97,24 +97,24 @@ class DatabaseManager(QWidget):
             cursor.execute(query, data)
             self.connection.commit()
             self.outputTextEdit.setPlainText(f"Запись успешно добавлена в таблицу {tablename}.")
-        except Error:
+        except:
             self.outputTextEdit.setPlainText(self.err_msg)
 
     def readData(self):
         try:
-            tablename = self.inputTextEdit.text()
+            tablename = self.inputTextEdit.toPlainText()
             cursor = self.connection.cursor()
             query = f"SELECT * FROM {tablename}"
             cursor.execute(query)
             result = cursor.fetchall()
             for row in result:
                 self.outputTextEdit.setPlainText(str(row))
-        except Error:
+        except:
             self.outputTextEdit.setPlainText(self.err_msg)
 
     def updateData(self):
         try:
-            data = self.inputTextEdit.text()
+            data = self.inputTextEdit.toPlainText()
             data = data.split(':')
             tablename = data[0].strip()
             data = data[1].split(';')
@@ -125,12 +125,12 @@ class DatabaseManager(QWidget):
             cursor.execute(query)
             self.connection.commit()
             self.outputTextEdit.setPlainText(f"Запись {condition} в таблице {tablename} успешно обновлена.")
-        except Error:
+        except:
             self.outputTextEdit.setPlainText(self.err_msg)
 
     def deleteData(self):
         try:
-            data = self.inputTextEdit.text()
+            data = self.inputTextEdit.toPlainText()
             data = data.split(':')
             tablename = data[0].strip()
             condition = data[1].strip()
@@ -140,5 +140,5 @@ class DatabaseManager(QWidget):
             cursor.execute(query)
             self.connection.commit()
             self.outputTextEdit.setPlainText(f"Запись {condition} успешно удалена из таблицы {tablename}.")
-        except Error:
+        except:
             self.outputTextEdit.setPlainText(self.err_msg)
